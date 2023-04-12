@@ -4,8 +4,6 @@ from itertools import count
 from pickle import NONE
 from re import I
 import time
-#from tkinter.messagebox import NO
-from xmlrpc.client import MININT
 import pyupbit
 import datetime
 import jwt   # PyJWT 
