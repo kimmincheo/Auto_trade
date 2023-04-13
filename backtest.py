@@ -184,8 +184,8 @@ while True:
                 while True:
                     try:
                         df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
-                        df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=76) # 1분당 캔들조회
-                        ma60 = round(df1['close'].rolling(window=70 ,min_periods=1).mean(),1)#60분 거래평균
+                        df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=106) # 1분당 캔들조회
+                        ma60 = round(df1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
                         ma5 = round(df['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
                         break
                     except Exception as e:
