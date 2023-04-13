@@ -62,7 +62,7 @@ def get_dispersion():
 
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
-    price = 0.007
+    price = 0.0052
 
     balan = upbit.get_balance_t('%s'%ticker)  # 거래 코인 갯수 float
     avg = upbit.get_avg_buy_price('%s'%ticker)# 거래 평균가
@@ -216,7 +216,7 @@ while True:
 
                     if (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <=-2:
 
-                        upbit.buy_market_order(KrCoin[max],360000)
+                        upbit.buy_market_order(KrCoin[max],440000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
                         get_target_sell(KrCoin[max])
