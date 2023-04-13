@@ -13,7 +13,7 @@ import os
 import pandas as pd
 from pytz import timezone
 import numpy as np
-import schedule
+#import schedule
 import sys
 access = "RZF9BxUayHxjtU7PrL0tnxMEu5IRQtOlpuk6bD7n"
 secret = "ynGxpZUPMh2prdcPebA8HjwHCPb7M8qQWki7HSkj"
@@ -129,9 +129,7 @@ while True:
                         except Exception as e:
                             continue
                     
-                   
-print((ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100)
-
+                
 while True:
     try: 
         now = datetime.datetime.now(timezone('Asia/Seoul'))
