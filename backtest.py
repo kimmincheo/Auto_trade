@@ -51,16 +51,13 @@ def get_target_open(ticker):
 
     return df.iloc[0]['open']
 
-# def get_dispersion():
-#     """분산 매수"""
+def get_dispersion():
+    """내 자산"""
 
-#     krw = upbit.get_balance() #보유중인 현금
+    krw = upbit.get_balance() #보유중인 현금
 
     
-#     if krw  <= 440000: 
-#         return krw
-#     else:
-#         return 440000
+    return krw
     
 
 def get_target_sell(ticker):
@@ -122,10 +119,23 @@ now = datetime.datetime.now(timezone('Asia/Seoul'))
 btime = datetime.datetime(1,1,1,1,1,1)  #매수 시간 초기화값을 모름 임시
 stime = datetime.datetime(1,1,1,1,1,1)  #매도 시간 초기화값을 모름 임시
 paretime = datetime.datetime(1,1,1,1,1,1) #시간비교를 위한 변수
+while True:
+                        try:
+                            ddf = pyupbit.get_ohlcv("%s-%s"%("KRW",'SRM'), interval="minute1", count=16)# 1분당 캔들조회
+                            ddf1 = pyupbit.get_ohlcv("%s-%s"%("KRW",'SRM'), interval="minute1", count=106) # 1분당 캔들조회
+                            ma60 = round(ddf1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
+                            ma5 = round(ddf['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
+                            break
+                        except Exception as e:
+                            continue
+                    
+                   
+print((ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100)
 
 while True:
     try: 
         now = datetime.datetime.now(timezone('Asia/Seoul'))
+        print ("1")
         #손절 ask
         bal = upbit.get_balances()
         for b in bal:
@@ -171,7 +181,7 @@ while True:
         
         
         for n in bal:
-            if ('KRW-%s' % n['currency']) == KrCoin[max] or 'KRW-OMG'== KrCoin[max] or 'KRW-SRM'== KrCoin[max]: # 이미 가지고 있는 코인인가?
+            if ('KRW-%s' % n['currency']) == KrCoin[max] or 'KRW-OMG'== KrCoin[max] or 'KRW-SRM'== KrCoin[max] or 'KRW-XRP'== KrCoin[max]or'KRW-GLM'== KrCoin[max]: # 이미 가지고 있는 코인인가?
                 if max == limit:
                     max = 0
                 else:
@@ -179,36 +189,44 @@ while True:
                 continue
         
         #매수 부분
-        if get_target_value(KrCoin[max]) >= 50000000000: #거래대금이 60,000백만 이상인가
-                
-                while True:
-                    try:
-                        df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
-                        df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=106) # 1분당 캔들조회
-                        ma60 = round(df1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
-                        ma5 = round(df['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
-                        break
-                    except Exception as e:
-                        continue
-                
-                
-                #골든크로스 매수 
-                if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-1] == ma60.iloc[-1]:#골든 크로스 매수   
-                    upbit.buy_market_order(KrCoin[max],440000)
-                    print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
-                    time.sleep(1)
-                    get_target_sell(KrCoin[max])
-                        
-               
-            
-                        
+        if get_dispersion() >= 440000:
+            if get_target_value(KrCoin[max]) >= 20000000000: #거래대금이 20,000백만 이상인가
+                    
+                    while True:
+                        try:
+                            df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
+                            df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=106) # 1분당 캔들조회
+                            ma60 = round(df1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
+                            ma5 = round(df['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
+                            break
+                        except Exception as e:
+                            continue
+                    
+                    
+                    #골든크로스 매수 
+                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-1] > ma60.iloc[-1] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.7:#골든 크로스 매수   
+                        upbit.buy_market_order(KrCoin[max],440000)
+                        print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
+                        time.sleep(1)
+                        get_target_sell(KrCoin[max])
+
+                    if (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <=-2:
+
+                        upbit.buy_market_order(KrCoin[max],440000)
+                        print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
+                        time.sleep(1)
+                        get_target_sell(KrCoin[max])
                             
                 
-        time.sleep(0.2)
-        if max ==limit:
-            max = 0
-        else:
-            max += 1
+                
+                            
+                                
+                    
+            time.sleep(0.2)
+            if max ==limit:
+                max = 0
+            else:
+                max += 1
     
     except Exception as e:
         time.sleep(1)
