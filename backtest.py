@@ -216,7 +216,7 @@ while True:
 
                     if (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <=-2:
 
-                        upbit.buy_market_order(KrCoin[max],440000)
+                        upbit.buy_market_order(KrCoin[max],360000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
                         get_target_sell(KrCoin[max])
