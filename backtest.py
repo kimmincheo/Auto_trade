@@ -129,7 +129,6 @@ while True:
                         except Exception as e:
                             continue
                     
-                
 while True:
     try: 
         now = datetime.datetime.now(timezone('Asia/Seoul'))
@@ -187,44 +186,45 @@ while True:
                 continue
         
         #매수 부분
-        if get_dispersion() >= 440000:
-            if get_target_value(KrCoin[max]) >= 20000000000: #거래대금이 20,000백만 이상인가
-                    
-                    while True:
-                        try:
-                            df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
-                            df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=106) # 1분당 캔들조회
-                            ma60 = round(df1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
-                            ma5 = round(df['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
-                            break
-                        except Exception as e:
-                            continue
-                    
-                    
-                    #골든크로스 매수 
-                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-1] > ma60.iloc[-1] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.7:#골든 크로스 매수   
-                        upbit.buy_market_order(KrCoin[max],440000)
-                        print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
-                        time.sleep(1)
-                        get_target_sell(KrCoin[max])
+        if get_target_price(KrCoin[max]) < 100000:
+            if get_dispersion() >= 440000:
+                if get_target_value(KrCoin[max]) >= 20000000000: #거래대금이 20,000백만 이상인가
+                        
+                        while True:
+                            try:
+                                df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
+                                df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=106) # 1분당 캔들조회
+                                ma60 = round(df1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
+                                ma5 = round(df['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
+                                break
+                            except Exception as e:
+                                continue
+                        
+                        
+                        #골든크로스 매수 
+                        if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-1] > ma60.iloc[-1] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.7:#골든 크로스 매수   
+                            upbit.buy_market_order(KrCoin[max],440000)
+                            print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
+                            time.sleep(1)
+                            get_target_sell(KrCoin[max])
 
-                    if (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <=-2:
+                        if (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <=-2:
 
-                        upbit.buy_market_order(KrCoin[max],440000)
-                        print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
-                        time.sleep(1)
-                        get_target_sell(KrCoin[max])
-                            
-                
-                
-                            
+                            upbit.buy_market_order(KrCoin[max],440000)
+                            print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
+                            time.sleep(1)
+                            get_target_sell(KrCoin[max])
                                 
                     
-            time.sleep(0.2)
-            if max ==limit:
-                max = 0
-            else:
-                max += 1
+                    
+                                
+                                    
+                        
+                time.sleep(0.2)
+                if max ==limit:
+                    max = 0
+                else:
+                    max += 1
     
     except Exception as e:
         time.sleep(1)
