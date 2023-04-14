@@ -185,7 +185,7 @@ while True:
         
         
         for n in bal:
-            if ('KRW-%s' % n['currency']) == KrCoin[max] or 'KRW-OMG'== KrCoin[max] or 'KRW-SRM'== KrCoin[max] or 'KRW-XRP'== KrCoin[max]or'KRW-GLM'== KrCoin[max] or 'KRW-BTC'== KrCoin[max] or 'KRW-ETH'== KrCoin[max] or 'KRW-DOGE'== KrCoin[max]: # 이미 가지고 있는 코인인가?
+            if ('KRW-%s' % n['currency']) == KrCoin[max] or 'KRW-OMG'== KrCoin[max] or 'KRW-SRM'== KrCoin[max] or 'KRW-XRP'== KrCoin[max]or'KRW-GLM'== KrCoin[max] or 'KRW-DOGE'== KrCoin[max]: # 이미 가지고 있는 코인인가?
                 if max == limit:
                     max = 0
                 else:
@@ -193,7 +193,7 @@ while True:
                 continue
         
         #매수 부분
-        if get_dispersion() >= 100000:
+        if get_dispersion() >= 100000 and get_target_price(KrCoin[max]) < 100000:
             if get_target_value(KrCoin[max]) >= 20000000000: #거래대금이 20,000백만 이상인가
                     
                     while True:
@@ -208,7 +208,7 @@ while True:
                     
                     
                     #골든크로스 매수 
-                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-1] > ma60.iloc[-1] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.7:#골든 크로스 매수   
+                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-1] > ma60.iloc[-1] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.3:#골든 크로스 매수   
                         upbit.buy_market_order(KrCoin[max],100000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
