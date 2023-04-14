@@ -166,8 +166,8 @@ while True:
                             continue
                     
                     for ca in cancel:
-                        daedcross1 = ma5.iloc[-1]-ma60.iloc[-1]
-                        if ma5.iloc[-1] == ma60.iloc[-1] and ma5[-2] > ma5[-1]:
+                        
+                        if (ma60.iloc[-1] - ma5.iloc[-1])/ma60.iloc[-1]*100 <= 0.5 and ma5[-2] > ma5[-1]:
                             upbit.cancel_order(ca['uuid'])
                             time.sleep(0.2)
                             balanc = upbit.get_balance(ticker)
@@ -208,7 +208,7 @@ while True:
                     
                     
                     #골든크로스 매수 
-                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-1] > ma60.iloc[-1] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.3:#골든 크로스 매수   
+                    if ma5.iloc[-1] > ma5.iloc[-2]  and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.3:#골든 크로스 매수   
                         upbit.buy_market_order(KrCoin[max],100000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
