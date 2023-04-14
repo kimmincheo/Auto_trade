@@ -155,24 +155,24 @@ while True:
                     buy_price = float (buy_avg)
                     price_avg = (return_price - buy_price) / buy_price * 100
     
-                    while True:
-                        try:
-                            ddf = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=16)# 1분당 캔들조회
-                            ddf1 = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=106) # 1분당 캔들조회
-                            ma60 = round(ddf1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
-                            ma5 = round(ddf['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
-                            break
-                        except Exception as e:
-                            continue
+                    # while True:
+                    #     try:
+                    #         ddf = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=16)# 1분당 캔들조회
+                    #         ddf1 = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=106) # 1분당 캔들조회
+                    #         ma60 = round(ddf1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
+                    #         ma5 = round(ddf['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
+                    #         break
+                    #     except Exception as e:
+                    #         continue
                     
-                    for ca in cancel:
+                    # for ca in cancel:
                         
-                        if (ma60.iloc[-1] - ma5.iloc[-1])/ma60.iloc[-1]*100 <= 0.5 and ma5[-2] > ma5[-1]:
-                            upbit.cancel_order(ca['uuid'])
-                            time.sleep(0.2)
-                            balanc = upbit.get_balance(ticker)
-                            upbit.sell_market_order("KRW-%s" %ticker, balanc)
-                            print("KRW-%s 데드크로스 매도" %ticker)
+                    #     if (ma60.iloc[-1] - ma5.iloc[-1])/ma60.iloc[-1]*100 <= 0.5 and ma5[-2] > ma5[-1]:
+                    #         upbit.cancel_order(ca['uuid'])
+                    #         time.sleep(0.2)
+                    #         balanc = upbit.get_balance(ticker)
+                    #         upbit.sell_market_order("KRW-%s" %ticker, balanc)
+                    #         print("KRW-%s 데드크로스 매도" %ticker)
 
                     if price_avg <= -3:
                         for ca in cancel:
@@ -214,7 +214,7 @@ while True:
                         time.sleep(1)
                         get_target_sell(KrCoin[max])
 
-                    if (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <=-1.7:
+                    if (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <=-1:
 
                         upbit.buy_market_order(KrCoin[max],100000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
