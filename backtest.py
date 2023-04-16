@@ -13,7 +13,7 @@ import os
 import pandas as pd
 from pytz import timezone
 import numpy as np
-#import schedule
+import schedule
 import sys
 access = "RZF9BxUayHxjtU7PrL0tnxMEu5IRQtOlpuk6bD7n"
 secret = "ynGxpZUPMh2prdcPebA8HjwHCPb7M8qQWki7HSkj"
@@ -92,25 +92,25 @@ def get_target_sell(ticker):
         upbit.sell_limit_order(
             ("%s" % ticker), round((avg * price + avg),2), balan)  # 지정가 매도코드 1원이상 10원미만
 
-def time_limit():
-    KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
-    for coin in KrCoin:
-        cancel = upbit.get_order('%s'%coin)
-        time.sleep(0.2)
-        if cancel!=[]:
-            for ca in cancel:      
-                upbit.cancel_order(ca['uuid'])
-                time.sleep(1)
+# # def time_limit():
+#     KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
+#     for coin in KrCoin:
+#         cancel = upbit.get_order('%s'%coin)
+#         time.sleep(0.2)
+#         if cancel!=[]:
+#             for ca in cancel:      
+#                 upbit.cancel_order(ca['uuid'])
+#                 time.sleep(1)
 
-    bal = upbit.get_balances()
-    for b in bal:
-        ticker = (b['currency']) #거래 코인명
-        balan = float(b['balance']) #거래 코인 갯수
+#     bal = upbit.get_balances()
+#     for b in bal:
+#         ticker = (b['currency']) #거래 코인명
+#         balan = float(b['balance']) #거래 코인 갯수
 
-        if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO':
-            upbit.sell_market_order("KRW-%s" %ticker, balan)
-            time.sleep(1)         
-    sys.exit()  
+#         if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO':
+#             upbit.sell_market_order("KRW-%s" %ticker, balan)
+#             time.sleep(1)         
+#     sys.exit()  
 
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
@@ -122,21 +122,11 @@ limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인
 slimittime = datetime.timedelta(seconds=30) #미체결 시간 매수
 rlimittime = datetime.timedelta(minutes=5) #5분
 
-now = datetime.datetime.now(timezone('Asia/Seoul'))
-
 btime = datetime.datetime(1,1,1,1,1,1)  #매수 시간 초기화값을 모름 임시
 stime = datetime.datetime(1,1,1,1,1,1)  #매도 시간 초기화값을 모름 임시
-paretime = datetime.datetime(1,1,1,1,1,1) #시간비교를 위한 변수
-while True:
-                        try:
-                            ddf = pyupbit.get_ohlcv("%s-%s"%("KRW",'SRM'), interval="minute1", count=16)# 1분당 캔들조회
-                            ddf1 = pyupbit.get_ohlcv("%s-%s"%("KRW",'SRM'), interval="minute1", count=106) # 1분당 캔들조회
-                            ma60 = round(ddf1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
-                            ma5 = round(ddf['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
-                            break
-                        except Exception as e:
-                            continue
-                    
+paretime = datetime.datetime(1,1,1,1,1,1) #시간비교를 위한 변
+
+    
 while True:
     try: 
         now = datetime.datetime.now(timezone('Asia/Seoul'))
@@ -208,7 +198,7 @@ while True:
                     
                     
                     #골든크로스 매수 
-                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-2] > ma5.iloc[-3]  and ma5.iloc[-3] > ma5.iloc[-4]  and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.32 and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 >= 0:#골든 크로스 매수   
+                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-2] > ma5.iloc[-3]  and ma5.iloc[-3] > ma5.iloc[-4]  and ma5.iloc[-2] < ma60.iloc[-2] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.18 and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 >= 0:#골든 크로스 매수   
                         upbit.buy_market_order(KrCoin[max],100000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
