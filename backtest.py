@@ -165,23 +165,23 @@ while True:
                         except Exception as e:
                             continue
                     
-                    for ca in cancel:
+                    # for ca in cancel:
                         
-                        if (ma60.iloc[-1] == ma5.iloc[-1]) and ma5[-2] > ma5[-1] and ma5[-3] > ma5[-2]:
-                            upbit.cancel_order(ca['uuid'])
-                            time.sleep(0.2)
-                            balanc = upbit.get_balance(ticker)
-                            upbit.sell_market_order("KRW-%s" %ticker, balanc)
-                            print("KRW-%s 데드크로스 매도" %ticker)
+                    #     if (ma60.iloc[-1] == ma5.iloc[-1]) and ma5[-2] > ma5[-1] and ma5[-3] > ma5[-2]:
+                    #         upbit.cancel_order(ca['uuid'])
+                    #         time.sleep(0.2)
+                    #         balanc = upbit.get_balance(ticker)
+                    #         upbit.sell_market_order("KRW-%s" %ticker, balanc)
+                    #         print("KRW-%s 데드크로스 매도" %ticker)
 
-                    if price_avg <= -3:
+                    if price_avg <= -2:
                         for ca in cancel:
                             
                             upbit.cancel_order(ca['uuid'])
                             time.sleep(0.2)
                             balanc = upbit.get_balance(ticker)
                             upbit.sell_market_order("KRW-%s" %ticker, balanc)
-                            print("KRW-%s 3퍼손절" %ticker)        
+                            print("KRW-%s 2퍼손절" %ticker)        
         
         
         for n in bal:
@@ -214,7 +214,7 @@ while True:
                         time.sleep(1)
                         get_target_sell(KrCoin[max])
 
-                    if (buy_price - ma5.iloc[-1])/buy_price*100 <=- 1.3:
+                    if (buy_price - ma5.iloc[-1])/buy_price*100 <=- 1.6:
 
                         upbit.buy_market_order(KrCoin[max],100000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
