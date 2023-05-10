@@ -86,11 +86,11 @@ def get_target_sell(ticker):
     
     elif compare >=10 and compare < 100:
         upbit.sell_limit_order(
-            ("%s" % ticker), math.trunc((avg * price + avg)), balan)  # 지정가 매도코드 10원이상 100원 미만
+            ("%s" % ticker), round((avg * price + avg),1), balan)  # 지정가 매도코드 10원이상 100원 미만
    
     elif compare >=1 and compare < 10:
         upbit.sell_limit_order(
-            ("%s" % ticker), math.trunc((avg * price + avg)), balan)  # 지정가 매도코드 1원이상 10원미만
+            ("%s" % ticker), round((avg * price + avg),2), balan)  # 지정가 매도코드 1원이상 10원미만
 
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
@@ -120,31 +120,7 @@ while True:
         now = datetime.datetime.now(timezone('Asia/Seoul'))
         #손절 ask
         bal = upbit.get_balances()
-        for b in bal:
-            ticker = (b['currency']) #거래 코인명
-            balan = (b['balance']) #거래 코인 갯수
-            buy_avg = (b['avg_buy_price']) #매수가격
-
-            if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO' and ticker!='APENFT':
-                    time.sleep(0.01)    
-                    cancel = upbit.get_order('KRW-%s'%ticker)
-                    
-                    return_price = (get_target_price("KRW-%s" %ticker)) #현재가격
-                    buy_price = float (buy_avg)
-                    price_avg = (return_price - buy_price) / buy_price * 100
-    
-                    for ca in cancel:
-                        buy_time = (ca ['created_at'])
-                        limittime = datetime.datetime.strptime(buy_time,'%Y-%m-%dT%H:%M:%S%z')
-                        limitseconds = now - limittime
-
-                        if limitseconds.seconds >= 1800:
-                            upbit.cancel_order(ca['uuid'])
-                            time.sleep(0.2)
-                            balanc = upbit.get_balance(ticker)
-                            upbit.sell_market_order("KRW-%s" %ticker, balanc)
-                            print("KRW-%s 30분 경과" %ticker)
-  
+        
         for n in bal:
             if ('KRW-%s' % n['currency']) == KrCoin[max] or 'KRW-OMG'== KrCoin[max] or 'KRW-SRM'== KrCoin[max] or 'KRW-XRP'== KrCoin[max]or'KRW-GLM'== KrCoin[max] or 'KRW-DOGE'== KrCoin[max]: # 이미 가지고 있는 코인인가?
                 if max == limit:
@@ -169,7 +145,8 @@ while True:
                     
                     
                     #골든크로스 매수 
-                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-2] > ma5.iloc[-3]  and ma5.iloc[-3] > ma5.iloc[-4]  and ma5.iloc[-2] < ma60.iloc[-2] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.18 and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 >= 0:#골든 크로스 매수   
+                    if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-2] > ma5.iloc[-3]  and ma5.iloc[-3] > ma5.iloc[-4] and ma5.iloc[-2] < ma60.iloc[-2] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.18 and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 >= 0:#골든 크로스 매수
+
                         upbit.buy_market_order(KrCoin[max],7000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
@@ -180,7 +157,26 @@ while True:
                         upbit.buy_market_order(KrCoin[max],7000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
-                        get_target_sell(KrCoin[max])      
+                        get_target_sell(KrCoin[max])
+
+        for b in bal:
+            ticker = (b['currency']) #거래 코인명
+        
+            if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO' and ticker!='APENFT':
+                    time.sleep(0.1)    
+                    cancel = upbit.get_order('KRW-%s'%ticker)
+    
+                    for ca in cancel:
+                        buy_time = (ca ['created_at'])
+                        limittime = datetime.datetime.strptime(buy_time,'%Y-%m-%dT%H:%M:%S%z')
+                        limitseconds = now - limittime
+
+                        if limitseconds.seconds >= 1800:
+                            upbit.cancel_order(ca['uuid'])
+                            time.sleep(0.2)
+                            balanc = upbit.get_balance(ticker)
+                            upbit.sell_market_order("KRW-%s" %ticker, balanc)
+                            print("KRW-%s 30분 경과" %ticker)                      
                                
         time.sleep(0.2)
         if max ==limit:
