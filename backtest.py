@@ -62,7 +62,7 @@ def get_dispersion():
 
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
-    price = 0.0052
+    price = 0.0075
 
     balan = upbit.get_balance_t('%s'%ticker)  # 거래 코인 갯수 float
     avg = upbit.get_avg_buy_price('%s'%ticker)# 거래 평균가
@@ -70,47 +70,27 @@ def get_target_sell(ticker):
 
     if compare >= 1000000:
         upbit.sell_limit_order(
-             ("%s" % ticker),round((avg * price + avg),-3), balan) # 지정가 매도코드 100만이상
+             ("%s" % ticker),math.trunc((avg * price + avg)), balan) # 지정가 매도코드 100만이상
 
     elif compare >= 100000 and compare < 1000000:
         upbit.sell_limit_order(
-             ("%s" % ticker),round((avg * price + avg),-2), balan) # 지정가 매도코드 10만원 이상 100만 미만
+             ("%s" % ticker),math.trunc((avg * price + avg)), balan) # 지정가 매도코드 10만원 이상 100만 미만
 
     elif compare >= 1000 and compare < 100000:
         upbit.sell_limit_order(
-             ("%s" % ticker),round((avg * price + avg),-1), balan)  # 지정가 매도코드 1천원 이상 10만 미만
+             ("%s" % ticker),math.trunc((avg * price + avg)), balan)  # 지정가 매도코드 1천원 이상 10만 미만
     
     elif compare >= 100 and compare < 1000:
         upbit.sell_limit_order(
-            ("%s" % ticker),round((avg * price + avg),0), balan)  # 지정가 매도코드 100원 이상 1천원 미만
+            ("%s" % ticker),math.trunc((avg * price + avg)), balan)  # 지정가 매도코드 100원 이상 1천원 미만
     
     elif compare >=10 and compare < 100:
         upbit.sell_limit_order(
-            ("%s" % ticker), round((avg * price + avg),1), balan)  # 지정가 매도코드 10원이상 100원 미만
+            ("%s" % ticker), math.trunc((avg * price + avg)), balan)  # 지정가 매도코드 10원이상 100원 미만
    
     elif compare >=1 and compare < 10:
         upbit.sell_limit_order(
-            ("%s" % ticker), round((avg * price + avg),2), balan)  # 지정가 매도코드 1원이상 10원미만
-
-# def time_limit():
-    # KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
-    # for coin in KrCoin:
-    #     cancel = upbit.get_order('%s'%coin)
-    #     time.sleep(0.2)
-    #     if cancel!=[]:
-    #         for ca in cancel:      
-    #             upbit.cancel_order(ca['uuid'])
-    #             time.sleep(1)
-
-#     bal = upbit.get_balances()
-#     for b in bal:
-#         ticker = (b['currency']) #거래 코인명
-#         balan = float(b['balance']) #거래 코인 갯수
-
-#         if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO':
-#             upbit.sell_market_order("KRW-%s" %ticker, balan)
-#             time.sleep(1)         
-#     sys.exit()  
+            ("%s" % ticker), math.trunc((avg * price + avg)), balan)  # 지정가 매도코드 1원이상 10원미만
 
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
@@ -118,7 +98,23 @@ print("로그인 확인")
 max = 0
 KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
 limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인
-
+# if price_avg <= -2:
+                    #     for ca in cancel:
+                            
+                    #         upbit.cancel_order(ca['uuid'])
+                    #         time.sleep(0.2)
+                    #         balanc = upbit.get_balance(ticker)
+                    #         upbit.sell_market_order("KRW-%s" %ticker, balanc)
+                    #         print("KRW-%s 2퍼손절" %ticker) 
+                     # while True:
+                    #     try:
+                    #         ddf = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=16)# 1분당 캔들조회
+                    #         ddf1 = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=106) # 1분당 캔들조회
+                    #         ma60 = round(ddf1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
+                    #         ma5 = round(ddf['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
+                    #         break
+                    #     except Exception as e:
+                    #         continue
 while True:
     try: 
         now = datetime.datetime.now(timezone('Asia/Seoul'))
@@ -137,38 +133,18 @@ while True:
                     buy_price = float (buy_avg)
                     price_avg = (return_price - buy_price) / buy_price * 100
     
-                    # while True:
-                    #     try:
-                    #         ddf = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=16)# 1분당 캔들조회
-                    #         ddf1 = pyupbit.get_ohlcv("%s-%s"%("KRW",ticker), interval="minute1", count=106) # 1분당 캔들조회
-                    #         ma60 = round(ddf1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
-                    #         ma5 = round(ddf['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
-                    #         break
-                    #     except Exception as e:
-                    #         continue
-                    
                     for ca in cancel:
                         buy_time = (ca ['created_at'])
                         limittime = datetime.datetime.strptime(buy_time,'%Y-%m-%dT%H:%M:%S%z')
                         limitseconds = now - limittime
 
-                        if limitseconds.seconds >=1800:
+                        if limitseconds.seconds >= 1800:
                             upbit.cancel_order(ca['uuid'])
                             time.sleep(0.2)
                             balanc = upbit.get_balance(ticker)
                             upbit.sell_market_order("KRW-%s" %ticker, balanc)
                             print("KRW-%s 30분 경과" %ticker)
-
-                    # if price_avg <= -2:
-                    #     for ca in cancel:
-                            
-                    #         upbit.cancel_order(ca['uuid'])
-                    #         time.sleep(0.2)
-                    #         balanc = upbit.get_balance(ticker)
-                    #         upbit.sell_market_order("KRW-%s" %ticker, balanc)
-                    #         print("KRW-%s 2퍼손절" %ticker)        
-        
-        
+  
         for n in bal:
             if ('KRW-%s' % n['currency']) == KrCoin[max] or 'KRW-OMG'== KrCoin[max] or 'KRW-SRM'== KrCoin[max] or 'KRW-XRP'== KrCoin[max]or'KRW-GLM'== KrCoin[max] or 'KRW-DOGE'== KrCoin[max]: # 이미 가지고 있는 코인인가?
                 if max == limit:
@@ -178,7 +154,7 @@ while True:
                 continue
         
         #매수 부분
-        if get_dispersion() >= 35000 and get_target_price(KrCoin[max]) < 100000:
+        if get_dispersion() >= 7000 and get_target_price(KrCoin[max]) < 100000:
             if get_target_value(KrCoin[max]) >= 20000000000: #거래대금이 20,000백만 이상인가
                     buy_price = get_target_price(KrCoin[max])
                     while True:
@@ -194,23 +170,18 @@ while True:
                     
                     #골든크로스 매수 
                     if ma5.iloc[-1] > ma5.iloc[-2]  and ma5.iloc[-2] > ma5.iloc[-3]  and ma5.iloc[-3] > ma5.iloc[-4]  and ma5.iloc[-2] < ma60.iloc[-2] and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 <= 0.18 and (ma5.iloc[-1]-ma60.iloc[-1])/ma5.iloc[-1]*100 >= 0:#골든 크로스 매수   
-                        upbit.buy_market_order(KrCoin[max],35000)
+                        upbit.buy_market_order(KrCoin[max],7000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
                         get_target_sell(KrCoin[max])
 
                     if (buy_price - ma5.iloc[-1])/buy_price*100 <=- 1.6:
 
-                        upbit.buy_market_order(KrCoin[max],35000)
+                        upbit.buy_market_order(KrCoin[max],7000)
                         print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
                         time.sleep(1)
-                        get_target_sell(KrCoin[max])
-                                
-                    
-                    
-                                
-                                    
-                        
+                        get_target_sell(KrCoin[max])      
+                               
         time.sleep(0.2)
         if max ==limit:
             max = 0
