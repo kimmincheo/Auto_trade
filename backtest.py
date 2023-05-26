@@ -129,25 +129,26 @@ while True:
         
         #매수 부분
         if get_dispersion() >= 7000 and get_target_price(KrCoin[max]) < 100000:
-            buy_price = get_target_price(KrCoin[max])
-            while True:
-                try:
-                    df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
-                    df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=106) # 1분당 캔들조회
-                    ma60 = round(df1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
-                    ma5 = round(df['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
-                    break
-                except Exception as e:
-                    continue
-                
-            buy_avg_per = (ma5.iloc[-1] - ma60.iloc[-1])/ma5.iloc[-1]*100
-                
-            #골든크로스 매수 
-            if  buy_avg_per < -0.4 and get_target_now_volume(KrCoin[max]) > 2000:#매수
-                upbit.buy_market_order(KrCoin[max],7000)
-                print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
-                time.sleep(1)
-                get_target_sell(KrCoin[max])
+            if get_target_value(KrCoin[max]) >= 10000000000: #거래대금이 10,000백만 이상인가
+                buy_price = get_target_price(KrCoin[max])
+                while True:
+                    try:
+                        df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
+                        df1 = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=106) # 1분당 캔들조회
+                        ma60 = round(df1['close'].rolling(window=100 ,min_periods=1).mean(),1)#60분 거래평균
+                        ma5 = round(df['close'].rolling(window=12 ,min_periods=1).mean(),1) #5분 거래평균
+                        break
+                    except Exception as e:
+                        continue
+                    
+                buy_avg_per = (ma5.iloc[-1] - ma60.iloc[-1])/ma5.iloc[-1]*100
+                    
+                #골든크로스 매수 
+                if  buy_avg_per < -0.4 and get_target_now_volume(KrCoin[max]) > 2000:#매수
+                    upbit.buy_market_order(KrCoin[max],7000)
+                    print("시간 : %s %s 골든크로스 매수" %(now,KrCoin[max]))
+                    time.sleep(1)
+                    get_target_sell(KrCoin[max])
 
                     
 
