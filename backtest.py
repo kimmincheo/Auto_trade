@@ -111,7 +111,6 @@ while True:
         now = datetime.datetime.now(timezone('Asia/Seoul'))
         #손절 ask
         bal = upbit.get_balances()
-        lkn = len(kn)-1
         for b in bal:
             ticker = (b['currency']) #거래 코인명
             buy_price = float ((b['avg_buy_price'])) # 코인 매수금액
@@ -131,7 +130,8 @@ while True:
                             upbit.sell_market_order("KRW-%s" %ticker, balanc)
                             print("KRW-%s 2퍼손절" %ticker)
         for k in kn:
-            b_cancel = upbit.get_order(kn[lkn])
+            b_cancel = upbit.get_order(k)
+            coin_name = k
             for bca in b_cancel:
                 does_buy = bca['side']
                 if does_buy == 'bid':
@@ -143,10 +143,10 @@ while True:
 
                             upbit.cancel_order(bca['uuid'])
                             time.sleep(0.2)
-                            print("%s 3분 경과 매수취소"%kn[lkn])
-                            kn.remove[lkn]
+                            print("%s 3분 경과 매수취소"%k)
+                            kn.remove(coin_name)
                 else:
-                    kn.remove[lkn]
+                    kn.remove(coin_name)
 
 
 
@@ -160,7 +160,7 @@ while True:
                 continue
         
         #매수 부분
-        if get_dispersion() >= 8000 and get_target_price(KrCoin[max]) < 100000:
+        if get_dispersion() >= 8000 and get_nowtarget_price(KrCoin[max]) < 100000:
             if get_target_value(KrCoin[max]) >= 10000000000: #거래대금이 10,000백만 이상인가
                 buy_price = get_target_price(KrCoin[max])
                 buy_low = get_target_low(KrCoin[max])
