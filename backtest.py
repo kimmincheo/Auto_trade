@@ -24,9 +24,14 @@ server_url = "https://api.upbit.com"
 
 
 def get_target_price(ticker):
-    """현재가"""
+    """현재가가"""
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=3) # 1분당 캔들조회
     return df.iloc[1]['open']
+
+def get_nowtarget_price(ticker):
+    """현재가"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2) # 1분당 캔들조회
+    return df.iloc[0]['open']
 
 def get_target_value(ticker):
     """거래대금"""
@@ -112,9 +117,10 @@ while True:
             buy_price = float ((b['avg_buy_price'])) # 코인 매수금액
 
             if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO' and ticker!='APENFT':
-                    time.sleep(0.1)    
+                    time.sleep(0.1)
+                    get_target_sell(bal)    
                     cancel = upbit.get_order('KRW-%s'%ticker) #uuid 수집
-                    buy_ticker = float (get_target_price('KRW-%s'%ticker))
+                    buy_ticker = float (get_nowtarget_price('KRW-%s'%ticker))
                     price_avg = (buy_ticker-buy_price)/buy_price*100
                     if price_avg <= 1.2:
                         for ca in cancel:
@@ -176,7 +182,7 @@ while True:
                     kn.append(KrCoin[max])
                     print("시간 : %s %s 매수" %(now,KrCoin[max]))
                     time.sleep(1)
-                    get_target_sell(KrCoin[max])
+                    
 
                     
 
