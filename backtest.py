@@ -117,11 +117,12 @@ while True:
 
             if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO' and ticker!='APENFT':
                     time.sleep(0.1)
-                    get_target_sell(bal)    
+                    get_target_sell('KRW-%s'%ticker)    
                     cancel = upbit.get_order('KRW-%s'%ticker) #uuid 수집
                     buy_ticker = float (get_nowtarget_price('KRW-%s'%ticker))
-                    price_avg = (buy_ticker-buy_price)/buy_price*100
-                    if price_avg <= 1.2:
+                    price_avg = (buy_ticker - buy_price)/buy_price*100
+
+                    if price_avg <= -1.2:
                         for ca in cancel:
                             
                             upbit.cancel_order(ca['uuid'])
@@ -152,15 +153,21 @@ while True:
 
 
         for n in bal:
-            if ('KRW-%s' % n['currency']) == KrCoin[max] or 'KRW-OMG'== KrCoin[max] or 'KRW-SRM'== KrCoin[max] or 'KRW-XRP'== KrCoin[max]or'KRW-GLM'== KrCoin[max] or 'KRW-DOGE'== KrCoin[max]: # 이미 가지고 있는 코인인가?
+            if ('KRW-%s' % n['currency']) == KrCoin[max]: # 이미 가지고 있는 코인인가?
                 if max == limit:
                     max = 0
                 else:
                     max += 1
                 continue
-        
+        for knn in kn:
+            if KrCoin[max] == knn:
+                if max == limit:
+                    max =0
+                else:
+                    max += 1
+                continue
         #매수 부분
-        if get_dispersion() >= 8000 and get_nowtarget_price(KrCoin[max]) < 100000:
+        if get_dispersion() > 5000 and get_nowtarget_price(KrCoin[max]) < 100000:
             if get_target_value(KrCoin[max]) >= 10000000000: #거래대금이 10,000백만 이상인가
                 buy_price = get_target_price(KrCoin[max])
                 buy_low = get_target_low(KrCoin[max])
@@ -178,7 +185,7 @@ while True:
                     
                 #골든크로스 매수 
                 if  buy_avg_per < -1.2 and get_target_now_volume(KrCoin[max]) > 2000:#매수
-                    upbit.buy_limit_order(KrCoin[max],buy_low,round(8000/buy_low),8)
+                    upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
                     kn.append(KrCoin[max])
                     print("시간 : %s %s 매수" %(now,KrCoin[max]))
                     time.sleep(1)
