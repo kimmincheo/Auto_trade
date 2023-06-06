@@ -13,7 +13,7 @@ import os
 import pandas as pd
 from pytz import timezone
 import numpy as np
-import telegram
+#import telegram
 import asyncio
 #import schedule
 import sys
@@ -26,7 +26,7 @@ server_url = "https://api.upbit.com"
 
 
 def get_target_price(ticker):
-    """현재가가"""
+    """현재가 전"""
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=3) # 1분당 캔들조회
     return df.iloc[1]['open']
 
@@ -172,6 +172,7 @@ while True:
         if get_dispersion() > 5000 and get_nowtarget_price(KrCoin[max]) < 100000:
             if get_target_value(KrCoin[max]) >= 10000000000: #거래대금이 10,000백만 이상인가
                 buy_price = get_target_price(KrCoin[max])
+                buy_now_price = get_nowtarget_price(KrCoin[max])
                 buy_low = get_target_low(KrCoin[max])
                 while True:
                     try:
@@ -184,9 +185,21 @@ while True:
                         continue
                     
                 buy_avg_per = (buy_price - ma60.iloc[-2])/buy_price*100
+                buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
                     
                 #골든크로스 매수 
-                if  buy_avg_per < -1.2 and get_target_now_volume(KrCoin[max]) > 2000:#매수
+                if  buy_avg_per < -1.2 and get_target_now_volume(KrCoin[max]) > 1000:#매수
+                    upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
+                    kn.append(KrCoin[max])
+                    async def main():
+                        CHAT_ID = '6071034278'
+                        TOKEN = '6240669790:AAEU5GJ7qa_kELgoC3mqlIk_AP0sTZN9fHA'
+                        bot = telegram.Bot(token=TOKEN)
+                        await bot.sendMessage(chat_id=CHAT_ID, text="%s 매수중"%KrCoin[max])
+                    asyncio.run(main())
+                    time.sleep(1)
+                #매수
+                if  buy_avg_per1 >= 0.7 and get_target_now_volume(KrCoin[max]) > 1000:#매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
                     kn.append(KrCoin[max])
                     async def main():
