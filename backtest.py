@@ -13,6 +13,8 @@ import os
 import pandas as pd
 from pytz import timezone
 import numpy as np
+import telegram
+import asyncio
 #import schedule
 import sys
 access = "RZF9BxUayHxjtU7PrL0tnxMEu5IRQtOlpuk6bD7n"
@@ -187,7 +189,12 @@ while True:
                 if  buy_avg_per < -1.2 and get_target_now_volume(KrCoin[max]) > 2000:#매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
                     kn.append(KrCoin[max])
-                    print("시간 : %s %s 매수" %(now,KrCoin[max]))
+                    async def main():
+                        CHAT_ID = '6071034278'
+                        TOKEN = '6240669790:AAEU5GJ7qa_kELgoC3mqlIk_AP0sTZN9fHA'
+                        bot = telegram.Bot(token=TOKEN)
+                        await bot.sendMessage(chat_id=CHAT_ID, text="%s 매수중"%KrCoin[max])
+                    asyncio.run(main())
                     time.sleep(1)
                     
 
