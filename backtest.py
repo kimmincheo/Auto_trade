@@ -13,7 +13,7 @@ import os
 import pandas as pd
 from pytz import timezone
 import numpy as np
-#import telegram
+import telegram
 import asyncio
 #import schedule
 import sys
@@ -66,7 +66,29 @@ def get_dispersion():
 
     
     return krw
+
+def get_target_buy(ticker):
+    """매수"""
     
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2) # 저가
+
+    compare = df.iloc[0]['low']
+    eadown = 2
+
+    if compare < 100000 and compare >= 10000: #1만이상 10만 미만
+        return compare - 10 * eadown 
+
+    elif compare >= 1000 and compare < 10000:
+        return compare - 5 * eadown # 1천 이상 1만 미만
+
+    elif compare >= 100 and compare < 1000:
+        return compare - 1 * eadown  # 100이상 1천미만
+    
+    elif compare >= 10 and compare < 100:
+        return compare - 0.1 * eadown  # 10 이상 100 미만
+    
+    elif compare >=1 and compare < 10:
+        return compare - 0.01 * eadown  # 1원 이상 10 미만   
 
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
@@ -173,7 +195,7 @@ while True:
             if get_target_value(KrCoin[max]) >= 10000000000: #거래대금이 10,000백만 이상인가
                 buy_price = get_target_price(KrCoin[max])
                 buy_now_price = get_nowtarget_price(KrCoin[max])
-                buy_low = get_target_low(KrCoin[max])
+                buy_low = get_target_buy(KrCoin[max])
                 while True:
                     try:
                         df = pyupbit.get_ohlcv(KrCoin[max], interval="minute1", count=16)# 1분당 캔들조회
@@ -188,8 +210,8 @@ while True:
                 buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
                     
                 #골든크로스 매수 
-                if  buy_avg_per < -1.2 and get_target_now_volume(KrCoin[max]) > 1000:#매수
-                    upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
+                if  buy_avg_per < -1.6 and get_target_now_volume(KrCoin[max]) > 1000:#매수
+                    upbit.buy_limit_order(KrCoin[max],buy_low,round(100000/buy_low),8)
                     kn.append(KrCoin[max])
                     async def main():
                         CHAT_ID = '6071034278'
@@ -199,16 +221,16 @@ while True:
                     asyncio.run(main())
                     time.sleep(1)
                 #매수
-                if  buy_avg_per1 >= 0.7 and get_target_now_volume(KrCoin[max]) > 1000:#매수
-                    upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
-                    kn.append(KrCoin[max])
-                    async def main():
-                        CHAT_ID = '6071034278'
-                        TOKEN = '6240669790:AAEU5GJ7qa_kELgoC3mqlIk_AP0sTZN9fHA'
-                        bot = telegram.Bot(token=TOKEN)
-                        await bot.sendMessage(chat_id=CHAT_ID, text="%s 매수중"%KrCoin[max])
-                    asyncio.run(main())
-                    time.sleep(1)
+                # if  buy_avg_per1 >= 0.7 and get_target_now_volume(KrCoin[max]) > 1000:#매수
+                #     upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
+                #     kn.append(KrCoin[max])
+                #     async def main():
+                #         CHAT_ID = '6071034278'
+                #         TOKEN = '6240669790:AAEU5GJ7qa_kELgoC3mqlIk_AP0sTZN9fHA'
+                #         bot = telegram.Bot(token=TOKEN)
+                #         await bot.sendMessage(chat_id=CHAT_ID, text="%s 매수중"%KrCoin[max])
+                #     asyncio.run(main())
+                #     time.sleep(1)
                     
 
                     
