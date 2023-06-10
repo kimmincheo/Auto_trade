@@ -17,8 +17,8 @@ import telegram
 import asyncio
 #import schedule
 import sys
-access = "RZF9BxUayHxjtU7PrL0tnxMEu5IRQtOlpuk6bD7n"
-secret = "ynGxpZUPMh2prdcPebA8HjwHCPb7M8qQWki7HSkj"
+access = "kCgJxMrzSRf0SmxRfixZT2JQb8biowIxbfsFdF7r"
+secret = "C4OWXw6o6NUYggVmQ1VRMx8EZjncxM9DrgMLtB5h"
 server_url = "https://api.upbit.com"
 #시가(open), 고가(high), 저가(low), 종가(close), 거래량(volume) 거래대금(value)
 
@@ -210,8 +210,8 @@ while True:
                 buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
                     
                 #골든크로스 매수 
-                if  buy_avg_per < -1.6 and get_target_now_volume(KrCoin[max]) > 1000:#매수
-                    upbit.buy_limit_order(KrCoin[max],buy_low,round(100000/buy_low),8)
+                if  buy_avg_per < -1.6 and get_target_now_volume(KrCoin[max]) > 2000 and buy_avg_per1 > -1:#매수
+                    upbit.buy_limit_order(KrCoin[max],buy_low,round((100000/buy_low),8))
                     kn.append(KrCoin[max])
                     async def main():
                         CHAT_ID = '6071034278'
