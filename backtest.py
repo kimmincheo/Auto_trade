@@ -146,15 +146,14 @@ while True:
             
             if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO' and ticker!='APENFT':
                     time.sleep(0.1)
-                    avg_volume_as = get_target_day_volume('KRW-%s'%ticker)/1380
+                    avg_volume_as = get_target_day_volume('KRW-%s'%ticker)/1441
                     get_target_sell('KRW-%s'%ticker)    
                     cancel = upbit.get_order('KRW-%s'%ticker) #uuid 수집
                     buy_ticker = float (get_nowtarget_price('KRW-%s'%ticker))
-                    price_avg = (buy_ticker - buy_price)/buy_price*100
+                    price_avg = (buy_ticker - buy_price)/buy_ticker*100
 
                     if price_avg <= -1.2 or get_target_now_volume(ticker)>=avg_volume_as*3:
                         for ca in cancel:
-                            
                             upbit.cancel_order(ca['uuid'])
                             time.sleep(0.2)
                             balanc = upbit.get_balance(ticker)
@@ -214,11 +213,12 @@ while True:
                     
                 buy_avg_per = (buy_price - ma60.iloc[-2])/buy_price*100
                 buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
-                avg_volume = get_target_day_volume(KrCoin[max])/1380
+                avg_volume = get_target_day_volume(KrCoin[max])/1441
                     
                 #골든크로스 매수 
-                if  buy_avg_per < -1.2 and get_target_now_volume(KrCoin[max]) > avg_volume and buy_avg_per1 > -1.2: #매수
+                if  get_target_now_volume(KrCoin[max]) > avg_volume*3: #매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round((100000/buy_low),8))
+                    
                     kn.append(KrCoin[max])
                     async def main():
                         CHAT_ID = '6071034278'
