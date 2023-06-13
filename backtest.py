@@ -41,7 +41,7 @@ def get_target_value(ticker):
     return df.iloc[0]['value']
 
 def get_target_day_volume(ticker):
-    """거래대금"""
+    """24시간 거래량"""
     df = pyupbit.get_ohlcv(ticker,interval="day",count=1) #24시간 거래량
     return df.iloc[0]['volume']
 
@@ -94,10 +94,10 @@ def get_target_buy(ticker):
     
     elif compare >=1 and compare < 10:
         return compare - 0.01 * eadown  # 1원 이상 10 미만   
-
+    
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
-    price = 0.0052
+    price = 0.0073
 
     balan = upbit.get_balance_t('%s'%ticker)  # 거래 코인 갯수 float
     avg = upbit.get_avg_buy_price('%s'%ticker)# 거래 평균가
@@ -143,15 +143,16 @@ while True:
         for b in bal:
             ticker = (b['currency']) #거래 코인명
             buy_price = float ((b['avg_buy_price'])) # 코인 매수금액
-
+            
             if ticker!='KRW'and ticker!='GTO'and ticker!='QTCON' and ticker!='VTHO' and ticker!='APENFT':
                     time.sleep(0.1)
+                    avg_volume_as = get_target_day_volume('KRW-%s'%ticker)/1380
                     get_target_sell('KRW-%s'%ticker)    
                     cancel = upbit.get_order('KRW-%s'%ticker) #uuid 수집
                     buy_ticker = float (get_nowtarget_price('KRW-%s'%ticker))
                     price_avg = (buy_ticker - buy_price)/buy_price*100
 
-                    if price_avg <= -1.2:
+                    if price_avg <= -1.2 or get_target_now_volume(ticker)>=avg_volume_as*3:
                         for ca in cancel:
                             
                             upbit.cancel_order(ca['uuid'])
@@ -169,11 +170,11 @@ while True:
                     limittime = datetime.datetime.strptime(buy_time,'%Y-%m-%dT%H:%M:%S%z')
                     limitseconds = now - limittime
 
-                    if limitseconds.seconds >= 180:
+                    if limitseconds.seconds >= 120:
 
                             upbit.cancel_order(bca['uuid'])
                             time.sleep(0.2)
-                            print("%s 3분 경과 매수취소"%k)
+                            print("%s 2분 경과 매수취소"%k)
                             kn.remove(coin_name)
                 else:
                     kn.remove(coin_name)
@@ -213,7 +214,7 @@ while True:
                     
                 buy_avg_per = (buy_price - ma60.iloc[-2])/buy_price*100
                 buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
-                avg_volume = get_target_day_volume(KrCoin[max])/1441
+                avg_volume = get_target_day_volume(KrCoin[max])/1380
                     
                 #골든크로스 매수 
                 if  buy_avg_per < -1.2 and get_target_now_volume(KrCoin[max]) > avg_volume and buy_avg_per1 > -1.2: #매수
@@ -226,6 +227,7 @@ while True:
                         await bot.sendMessage(chat_id=CHAT_ID, text="%s 매수중"%KrCoin[max])
                     asyncio.run(main())
                     time.sleep(1)
+
                 #매수
                 # if  buy_avg_per1 >= 0.7 and get_target_now_volume(KrCoin[max]) > 1000:#매수
                 #     upbit.buy_limit_order(KrCoin[max],buy_low,round(9000/buy_low),8)
