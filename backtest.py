@@ -81,7 +81,7 @@ def get_target_buy(ticker):
     eadown = 2
 
     if compare < 100000 and compare >= 10000: #1만이상 10만 미만
-        return compare - 10 * eadown 
+        return compare - 20 * eadown 
 
     elif compare >= 1000 and compare < 10000:
         return compare - 5 * eadown # 1천 이상 1만 미만
@@ -97,7 +97,7 @@ def get_target_buy(ticker):
     
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
-    price = 0.0052
+    price = 0.0073
 
     balan = upbit.get_balance_t('%s'%ticker)  # 거래 코인 갯수 float
     avg = upbit.get_avg_buy_price('%s'%ticker)# 거래 평균가
@@ -202,7 +202,7 @@ while True:
                 continue
         #매수 부분
         if get_dispersion() > 5000 and get_nowtarget_price(KrCoin[max]) < 100000:
-            if get_target_value(KrCoin[max]) >= 10000000000: #거래대금이 10,000백만 이상인가
+            if get_target_value(KrCoin[max]) >= 8000000000: #거래대금이 80억 이상인가
                 buy_price = get_target_price(KrCoin[max])
                 buy_now_price = get_nowtarget_price(KrCoin[max])
                 buy_low = get_target_buy(KrCoin[max])
@@ -216,13 +216,13 @@ while True:
                     except Exception as e:
                         continue
                     
-                buy_avg_per = (buy_price - ma60.iloc[-2])/buy_price*100
+                buy_avg_per = (buy_price - ma60.iloc[-1])/buy_price*100
                 buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
                 avg_volume = get_target_day_volume(KrCoin[max])/1441
                     
                 #골든크로스 매수 
-                if  get_target_now_volume(KrCoin[max]) > avg_volume*6: #매수
-                    upbit.buy_limit_order(KrCoin[max],buy_low,round((100000/buy_low),8))
+                if  get_target_now_volume(KrCoin[max]) > avg_volume*6 and buy_avg_per <= -0.4: #매수
+                    upbit.buy_limit_order(KrCoin[max],buy_low,round((65000/buy_low),8))
                     
                     kn.append(KrCoin[max])
                     async def main():
