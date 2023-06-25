@@ -80,15 +80,24 @@ def get_target_buy(ticker):
     compare = df.iloc[0]['low']
     eadown = 2
 
-    if compare < 100000 and compare >= 10000: #1만이상 10만 미만
-        return compare - 20 * eadown 
+    if compare < 100000 and compare >= 40000: #4만이상 10만 미만
+        return compare - 40 * eadown 
 
-    elif compare >= 1000 and compare < 10000:
-        return compare - 5 * eadown # 1천 이상 1만 미만
+    elif compare >= 10000 and compare < 40000:
+        return compare - 20 * eadown # 1만 이상 4만 미만
 
-    elif compare >= 100 and compare < 1000:
-        return compare - 1 * eadown  # 100이상 1천미만
-    
+    elif compare >= 5000 and compare < 10000:
+        return compare - 10 * eadown # 5천 이상 1만 미만
+
+    elif compare >= 1000 and compare < 4000:
+        return compare - 5 * eadown # 1천 이상 4천 미만    
+
+    elif compare >= 600 and compare < 1000:
+        return compare - 2 * eadown  # 600이상 1천미만
+        
+    elif compare >= 100 and compare < 600:
+        return compare - 1 * eadown  # 100이상 600미만
+
     elif compare >= 10 and compare < 100:
         return compare - 0.1 * eadown  # 10 이상 100 미만
     
@@ -157,7 +166,7 @@ while True:
                         limitsell_seconds = now - limitsell_time
 
                         if limitsell_seconds.seconds >= 60:
-                            if price_avg <= -1.2 or get_target_now_volume(ticker)>=avg_volume_as*6:
+                            if price_avg <= -1.6 or get_target_now_volume(ticker)>=avg_volume_as*6:
                                 for ca in cancel:
                                     upbit.cancel_order(ca['uuid'])
                                     time.sleep(0.2)
