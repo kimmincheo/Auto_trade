@@ -37,20 +37,13 @@ def get_nowtarget_price(ticker):
 
 def get_target_value(ticker):
     """거래대금"""
-    df = pyupbit.get_ohlcv(ticker,interval="day",count=1) #24시간 거래대금
+    df = pyupbit.get_ohlcv(ticker,interval="day",count=2) #24시간 거래대금
     return df.iloc[0]['value']
 
 def get_target_day_volume(ticker):
     """24시간 거래량"""
-    df = pyupbit.get_ohlcv(ticker,interval="day",count=1) #24시간 거래량
+    df = pyupbit.get_ohlcv(ticker,interval="day",count=2) #24시간 거래량
     return df.iloc[0]['volume']
-
-def get_target_volume(ticker):
-    """거래량 """ 
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2) # 1분당 캔들조회
-
-    if df.iloc[0]['volume']!=None:
-        return df.iloc[0]['volume']
 
 def get_target_now_volume(ticker):
     """현재 거래량 """ 
@@ -63,7 +56,7 @@ def get_target_low(ticker):
     """저가 """
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=3) # 저가
 
-    return df.iloc[1]['low']
+    return df.iloc[0]['low']
 
 def get_dispersion():
     """내 자산"""
@@ -116,7 +109,8 @@ def get_target_buy(ticker):
         return compare - 0.001 * eadown  # 0.1원 이상 1미만
 
     elif compare < 0.1:
-        return compare - 0.0001 * eadown  # 0.1 미만             
+        return compare - 0.0001 * eadown  # 0.1 미만    
+
 def get_asset():
 
     krw = upbit.get_balance()/7 # 분할 매수
@@ -171,6 +165,7 @@ KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
 limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인  
 kn = []
 asset = get_asset()
+
 while True:
     try: 
         now = datetime.datetime.now(timezone('Asia/Seoul'))
@@ -226,6 +221,7 @@ while True:
                 else:
                     max += 1
                 continue
+
         for knn in kn:
             if KrCoin[max] == knn:
                 if max == limit:
@@ -235,7 +231,7 @@ while True:
                 continue
         #매수 부분
         if get_dispersion() > 5000 and get_nowtarget_price(KrCoin[max]) < 500000:
-            if get_target_value(KrCoin[max]) >= 8000000000: #거래대금이 80억 이상인가
+            if get_target_value(KrCoin[max]) >= 8000000,000: #거래대금이 80억 이상인가
                 buy_price = get_target_price(KrCoin[max])
                 buy_now_price = get_nowtarget_price(KrCoin[max])
                 buy_low = get_target_buy(KrCoin[max])
@@ -254,7 +250,7 @@ while True:
                 avg_volume = get_target_day_volume(KrCoin[max])/1441
                     
                 #골든크로스 매수 
-                if get_target_now_volume(KrCoin[max]) > avg_volume*6: #매수
+                if get_target_now_volume(KrCoin[max]) > avg_volume*1.7: #매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round((asset/buy_low),8))
                     kn.append(KrCoin[max])
                     async def main():
