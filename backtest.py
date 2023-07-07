@@ -51,6 +51,7 @@ def get_target_volume(ticker):
 
     if df.iloc[0]['volume']!=None:
         return df.iloc[0]['volume']
+
 def get_target_now_volume(ticker):
     """현재 거래량 """ 
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=1) # 1분당 캔들조회
@@ -249,13 +250,12 @@ while True:
                         continue
                     
                 buy_avg_per = (buy_price - ma60.iloc[-1])/buy_price*100
-                buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
+                #buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100  and buy_avg_per <= -0.4
                 avg_volume = get_target_day_volume(KrCoin[max])/1441
                     
                 #골든크로스 매수 
-                if  get_target_now_volume(KrCoin[max]) > avg_volume*6 and buy_avg_per <= -0.4: #매수
+                if get_target_now_volume(KrCoin[max]) > avg_volume*6: #매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round((asset/buy_low),8))
-                    
                     kn.append(KrCoin[max])
                     async def main():
                         CHAT_ID = '6071034278'
