@@ -115,8 +115,12 @@ def get_asset():
 
     krw = upbit.get_balance()/7 # 분할 매수
     
-    return round(krw)
+    return krw
 
+def get_balan():
+    balance = upbit.get_balance()/7 # 분할 매수
+    
+    return balance
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
     price = 0.0073
@@ -164,13 +168,13 @@ max = 0
 KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
 limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인  
 kn = []
-asset = get_asset()
-
+balance = get_asset()
+schedule.every().day.at("08:50").do(get_balan)
 while True:
-    try: 
-        now = datetime.datetime.now(timezone('Asia/Seoul'))
+    try:
         schedule.run_pending()
-        asset = schedule.every().day.at("09:00").do(get_asset)
+        time.sleep(0.3)
+        now = datetime.datetime.now(timezone('Asia/Seoul'))
         #손절 ask
         bal = upbit.get_balances()
         for b in bal:
@@ -231,7 +235,7 @@ while True:
                 continue
         #매수 부분
         if get_dispersion() > 5000 and get_nowtarget_price(KrCoin[max]) < 500000:
-            if get_target_value(KrCoin[max]) >= 8000000,000: #거래대금이 80억 이상인가
+            if get_target_value(KrCoin[max]) >= 8000000000: #거래대금이 80억 이상인가
                 buy_price = get_target_price(KrCoin[max])
                 buy_now_price = get_nowtarget_price(KrCoin[max])
                 buy_low = get_target_buy(KrCoin[max])
@@ -246,12 +250,12 @@ while True:
                         continue
                     
                 buy_avg_per = (buy_price - ma60.iloc[-1])/buy_price*100
-                #buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100  and buy_avg_per <= -0.4
+                #buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
                 avg_volume = get_target_day_volume(KrCoin[max])/1441
                     
                 #골든크로스 매수 
-                if get_target_now_volume(KrCoin[max]) > avg_volume*1.7: #매수
-                    upbit.buy_limit_order(KrCoin[max],buy_low,round((asset/buy_low),8))
+                if get_target_now_volume(KrCoin[max]) > avg_volume*3 and buy_avg_per <= -0.4: #매수
+                    upbit.buy_limit_order(KrCoin[max],buy_low,round((balance/buy_low),8))
                     kn.append(KrCoin[max])
                     async def main():
                         CHAT_ID = '6071034278'
