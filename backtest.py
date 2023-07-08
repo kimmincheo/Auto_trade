@@ -117,10 +117,10 @@ def get_asset():
     
     return krw
 
-def get_balan():
-    balance = upbit.get_balance()/7 # 분할 매수
+def get_balan(bal):
+    bal = upbit.get_balance()/7 # 분할 매수
     
-    return balance
+    return bal
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
     price = 0.0073
@@ -169,7 +169,7 @@ KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
 limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인  
 kn = []
 balance = get_asset()
-schedule.every().day.at("08:50").do(get_balan)
+schedule.every().day.at("08:50").do(get_balan,balance)
 while True:
     try:
         schedule.run_pending()
