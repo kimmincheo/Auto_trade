@@ -117,10 +117,12 @@ def get_asset():
     
     return krw
 
-def get_balan(bal):
-    bal = upbit.get_balance()/7 # 분할 매수
+def get_balan():
+    global balance
+
+    balance = upbit.get_balance()/7 # 분할 매수
     
-    return bal
+    
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
     price = 0.0073
@@ -169,11 +171,13 @@ KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
 limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인  
 kn = []
 balance = get_asset()
-schedule.every().day.at("08:50").do(get_balan,balance)
+schedule.every().day.at("08:50").do(get_balan)
+
 while True:
     try:
         schedule.run_pending()
         time.sleep(0.3)
+        
         now = datetime.datetime.now(timezone('Asia/Seoul'))
         #손절 ask
         bal = upbit.get_balances()
@@ -250,11 +254,11 @@ while True:
                         continue
                     
                 buy_avg_per = (buy_price - ma60.iloc[-1])/buy_price*100
-                #buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
+                #buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100  and buy_avg_per <= -0.4
                 avg_volume = get_target_day_volume(KrCoin[max])/1441
                     
                 #골든크로스 매수 
-                if get_target_now_volume(KrCoin[max]) > avg_volume*3 and buy_avg_per <= -0.4: #매수
+                if get_target_now_volume(KrCoin[max]) > avg_volume*3: #매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round((balance/buy_low),8))
                     kn.append(KrCoin[max])
                     async def main():
