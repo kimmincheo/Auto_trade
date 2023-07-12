@@ -17,9 +17,8 @@ import telegram
 import asyncio
 import schedule
 import sys
-access = "kCgJxMrzSRf0SmxRfixZT2JQb8biowIxbfsFdF7r"
-secret = "C4OWXw6o6NUYggVmQ1VRMx8EZjncxM9DrgMLtB5h"
-server_url = "https://api.upbit.com"
+access = "your-access"
+secret = "your-secret"
 #시가(open), 고가(high), 저가(low), 종가(close), 거래량(volume) 거래대금(value)
 
 
