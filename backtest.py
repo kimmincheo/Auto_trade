@@ -76,7 +76,7 @@ def get_target_buy(ticker):
 
 
     if compare >= 300000 and compare < 500000:
-        return compare - 200 * eadown # 30만 이상 50만 미만
+        return compare - 500 * eadown # 30만 이상 50만 미만
 
     elif compare >= 100000 and compare < 300000:
         return compare - 150 * eadown # 10만 이상 30만 미만
@@ -91,7 +91,7 @@ def get_target_buy(ticker):
         return compare - 10 * eadown # 5천 이상 1만 미만
 
     elif compare >= 1000 and compare < 4000:
-        return compare - 5 * eadown # 1천 이상 4천 미만    
+        return compare - 10 * eadown # 1천 이상 4천 미만    
 
     elif compare >= 600 and compare < 1000:
         return compare - 2 * eadown  # 600이상 1천미만
@@ -120,7 +120,7 @@ def get_asset():
 def get_balan():
     global balance
 
-    balance = upbit.get_balance()/7 # 분할 매수
+    balance = upbit.get_balance()/8 # 분할 매수
     
     
 def get_target_sell(ticker):
@@ -177,7 +177,7 @@ while True:
     try:
         schedule.run_pending()
         time.sleep(0.3)
-        
+        print(balance)
         now = datetime.datetime.now(timezone('Asia/Seoul'))
         #손절 ask
         bal = upbit.get_balances()
@@ -193,7 +193,7 @@ while True:
                     buy_ticker = float (get_nowtarget_price('KRW-%s'%ticker))
                     price_avg = (buy_ticker - buy_price)/buy_ticker*100
                          
-                    if price_avg <= -2.0:
+                    if price_avg <= -1.8:
                         for ca in cancel:
                             upbit.cancel_order(ca['uuid'])
                             time.sleep(0.2)
@@ -210,11 +210,11 @@ while True:
                     limittime = datetime.datetime.strptime(buy_time,'%Y-%m-%dT%H:%M:%S%z')
                     limitseconds = now - limittime
 
-                    if limitseconds.seconds >= 120:
+                    if limitseconds.seconds >= 20:
 
                             upbit.cancel_order(bca['uuid'])
                             time.sleep(0.2)
-                            print("%s 2분 경과 매수취소"%k)
+                            print("%s 20초 경과 매수취소"%k)
                             kn.remove(coin_name)
                 else:
                     kn.remove(coin_name)
@@ -254,11 +254,11 @@ while True:
                         continue
                     
                 buy_avg_per = (buy_price - ma60.iloc[-1])/buy_price*100
-                #buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100  and buy_avg_per <= -0.4
+                buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
                 avg_volume = get_target_day_volume(KrCoin[max])/1441
                     
                 #골든크로스 매수 
-                if get_target_now_volume(KrCoin[max]) > avg_volume*3: #매수
+                if get_target_now_volume(KrCoin[max]) > avg_volume*3 and buy_avg_per1 > -0.7:#매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round((balance/buy_low),8))
                     kn.append(KrCoin[max])
                     async def main():
