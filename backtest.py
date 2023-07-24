@@ -31,8 +31,8 @@ def get_target_price(ticker):
 
 def get_nowtarget_price(ticker):
     """현재가"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2) # 1분당 캔들조회
-    return df.iloc[0]['open']
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=1) # 1분당 캔들조회
+    return df.iloc[0]['close']
 
 def get_target_value(ticker):
     """거래대금"""
@@ -169,14 +169,14 @@ max = 0
 KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
 limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인  
 kn = []
-balance = get_asset()
-schedule.every().day.at("08:50").do(get_balan)
-
+#balance = get_asset()
+# schedule.every().day.at("08:50").do(get_balan)
+# print (get_nowtarget_price('krw-xrp'))
 while True:
     try:
-        schedule.run_pending()
-        time.sleep(0.3)
-        print(balance)
+        #schedule.run_pending()
+        #time.sleep(0.3)
+        #print(balance)
         now = datetime.datetime.now(timezone('Asia/Seoul'))
         #손절 ask
         bal = upbit.get_balances()
