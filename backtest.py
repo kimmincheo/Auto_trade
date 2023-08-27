@@ -112,7 +112,7 @@ def get_target_buy(ticker):
 
 def get_asset():
 
-    krw = upbit.get_balance()/7 # 분할 매수
+    krw = upbit.get_balance()/1 # 분할 매수
     
     return krw
 
@@ -124,7 +124,7 @@ def get_balan():
     
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
-    price = 0.0073
+    price = 0.0034
 
     balan = upbit.get_balance_t('%s'%ticker)  # 거래 코인 갯수 float
     avg = upbit.get_avg_buy_price('%s'%ticker)# 거래 평균가
@@ -169,7 +169,7 @@ max = 0
 KrCoin = pyupbit.get_tickers(fiat="KRW") #원화거래 코인 조회
 limit = len(KrCoin)-1 # 조회된 원화거래코인 최대개수확인  
 kn = []
-#balance = get_asset()
+balance = get_asset()
 # schedule.every().day.at("08:50").do(get_balan)
 # print (get_nowtarget_price('krw-xrp'))
 while True:
@@ -192,7 +192,7 @@ while True:
                     buy_ticker = float (get_nowtarget_price('KRW-%s'%ticker))
                     price_avg = (buy_ticker - buy_price)/buy_ticker*100
                          
-                    if price_avg <= -1.8:
+                    if price_avg <= -0.8:
                         for ca in cancel:
                             upbit.cancel_order(ca['uuid'])
                             time.sleep(0.2)
