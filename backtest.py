@@ -60,7 +60,7 @@ def get_target_low(ticker):
 def get_dispersion():
     """내 자산"""
 
-    krw = upbit.get_balance() #보유중인 현금
+    krw = 95000 #upbit.get_balance() #보유중인 현금
 
     
     return krw
@@ -71,7 +71,7 @@ def get_target_buy(ticker):
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=1) # 저가
 
     compare = df.iloc[0]['low']
-    eadown = 3
+    eadown = 2
 
 
     if compare >= 300000 and compare < 500000:
@@ -87,7 +87,7 @@ def get_target_buy(ticker):
         return compare - 20 * eadown # 1만 이상 4만 미만
 
     elif compare >= 5000 and compare < 10000:
-        return compare - 10 * eadown # 5천 이상 1만 미만
+        return compare - 15 * eadown # 5천 이상 1만 미만
 
     elif compare >= 1000 and compare < 4000:
         return compare - 10 * eadown # 1천 이상 4천 미만    
@@ -112,14 +112,9 @@ def get_target_buy(ticker):
 
 def get_asset():
 
-    krw = upbit.get_balance()/1 # 분할 매수
+    krw = upbit.get_balance() # 분할 매수
     
     return krw
-
-def get_balan():
-    global balance
-
-    balance = upbit.get_balance()/8 # 분할 매수
     
     
 def get_target_sell(ticker):
