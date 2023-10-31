@@ -22,19 +22,6 @@ access = "Your-access"
 secret = "Your-Secret"
 #시가(open), 고가(high), 저가(low), 종가(close), 거래량(volume) 거래대금(value)
 
-win = Tk() # 창 생성
-
-win.geometry("1000x500")
-win.title("코인 자동 매매")
-win.option_add("*Font","맑은고딕 25")
-btn = Button(win)
-btn.config(text="버튼")
-btn.config(width=10)
-#btn.config(command=)
-btn.pack()
-win.mainloop() # 창 실행
-
-
 
 def get_target_price(ticker):
     """현재가 전"""
