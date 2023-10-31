@@ -18,8 +18,8 @@ import asyncio
 import schedule
 import sys
 from tkinter import *
-access = "kCgJxMrzSRf0SmxRfixZT2JQb8biowIxbfsFdF7r"
-secret = "C4OWXw6o6NUYggVmQ1VRMx8EZjncxM9DrgMLtB5h"
+access = "Your-access"
+secret = "Your-Secret"
 #시가(open), 고가(high), 저가(low), 종가(close), 거래량(volume) 거래대금(value)
 
 win = Tk() # 창 생성
