@@ -17,16 +17,16 @@ import telegram
 import asyncio
 import schedule
 import sys
-from tkinter import *
-access = "Your-access"
-secret = "Your-Secret"
+#from tkinter import *
+access = "you-access"
+secret = "you-secret"
 #시가(open), 고가(high), 저가(low), 종가(close), 거래량(volume) 거래대금(value)
 
 
 def get_target_price(ticker):
     """현재가 전"""
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=3) # 1분당 캔들조회
-    return df.iloc[1]['open']
+    return df.iloc[0]['open']
 
 def get_nowtarget_price(ticker):
     """현재가"""
@@ -45,9 +45,9 @@ def get_target_day_volume(ticker):
 
 def get_target_now_volume(ticker):
     """현재 거래량 """ 
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=1) # 1분당 캔들조회
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2) # 1분당 캔들조회
 
-    if df.iloc[0]['volume']!=None:
+    if df.iloc[1]['volume']!=None:
         return df.iloc[0]['volume']
 
 def get_target_low(ticker):
@@ -69,7 +69,7 @@ def get_target_buy(ticker):
     
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=1) # 저가
 
-    compare = df.iloc[0]['low']
+    compare = df.iloc[0]['close']
     eadown = 2
 
 
@@ -118,7 +118,7 @@ def get_asset():
     
 def get_target_sell(ticker):
     """매도하는 코ㅗㅗㅗ드"""
-    price = 0.0032
+    price = 0.0052
 
     balan = upbit.get_balance_t('%s'%ticker)  # 거래 코인 갯수 float
     avg = upbit.get_avg_buy_price('%s'%ticker)# 거래 평균가
@@ -167,6 +167,7 @@ balance = get_asset()
 print(balance)
 # schedule.every().day.at("08:50").do(get_balan)
 # print (get_nowtarget_price('krw-xrp'))
+
 while True:
     try:
         #schedule.run_pending()
@@ -233,7 +234,7 @@ while True:
                 continue
         #매수 부분
         if get_dispersion() > 5000 and get_nowtarget_price(KrCoin[max]) < 500000:
-            if get_target_value(KrCoin[max]) >= 8000000000: #거래대금이 80억 이상인가
+            if get_target_value(KrCoin[max]) >= 60000000000: #거래대금이 600억 이상인가
                 buy_price = get_target_price(KrCoin[max])
                 buy_now_price = get_nowtarget_price(KrCoin[max])
                 buy_low = get_target_buy(KrCoin[max])
@@ -249,11 +250,12 @@ while True:
                     
                 buy_avg_per = (buy_price - ma60.iloc[-1])/buy_price*100
                 buy_avg_per1 = (buy_now_price - ma5.iloc[-1])/buy_now_price*100
-                avg_volume = get_target_day_volume(KrCoin[max])/1441
+                avg_volume = get_target_day_volume(KrCoin[max])/1440
                     # and buy_avg_per1 > -0.7
                 #골든크로스 매수 
-                if get_target_now_volume(KrCoin[max]) > avg_volume*2:#매수
+                if get_target_now_volume(KrCoin[max]) > avg_volume/2:#매수
                     upbit.buy_limit_order(KrCoin[max],buy_low,round((balance/buy_low),8))
+                    #upbit.buy_market_order(KrCoin[max],balance)
                     kn.append(KrCoin[max])
                     async def main():
                         CHAT_ID = '6071034278'
